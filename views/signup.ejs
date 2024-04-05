@@ -1,0 +1,83 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Login Page | CodingNepal</title>
+    <link rel="stylesheet" href="/login.css">
+</head>
+<body>
+    <div class="form-wrapper">
+        <h2>Sign Up</h2>
+        <form>
+            <div class="form-control">
+                <input type="text" name="phone_no" required>
+                <label>phone number</label>
+            </div>
+            <div class="phone error"></div>
+            <div class="form-control">
+                <input type="text" name="email" required>
+                <label>Email</label>
+            </div>
+            <div class="email error"></div>
+            <div class="form-control">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+            <div class="password error"></div>
+            <button type="submit">Sign Up</button>
+            <div class="form-help"> 
+                <div class="remember-me">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <a href="#">Need help?</a>
+            </div>
+        </form>
+        <small>
+            This page is protected by Google reCAPTCHA to ensure you're not a bot. 
+            <a href="#">Learn more.</a>
+        </small>
+    </div>
+    <script>
+
+        const form = document.querySelector('form');
+        const emailError=document.querySelector('.email.error')
+        const phoneError=document.querySelector('.phone.error')
+        const passwordError=document.querySelector('.password.error')
+        form.addEventListener('submit',async (e) => {
+        e.preventDefault();
+
+        //reset errors
+        phoneError.textContent='';
+        emailError.textContent='';
+        passwordError.textContent='';
+    
+        // get the values
+        const phone_no=form.phone_no.value;
+        const email = form.email.value;
+        const password = form.password.value;
+    
+        try{
+            const res=await fetch('/signup',{
+                method: 'POST',
+                body: JSON.stringify({phone_no,email,password}),
+                headers: {'content-type':'application/json'}
+            });
+            const data=await res.json();
+            if(data.errors){
+                phoneError.textContent=data.errors.phone_no;
+                emailError.textContent= data.errors.email;
+                passwordError.textContent=data.errors.password;
+            }
+            if(data.user){
+                location.assign('/');
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+    
+        });
+    </script>
+</body>
+</html>
